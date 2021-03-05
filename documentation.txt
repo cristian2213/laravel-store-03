@@ -1,0 +1,81 @@
+0. el archivo index.php en /public es el encargado de la configuracion inicial de todo laravel
+
+1. php artisan  key:generate => genera una nueva llave en el archivo de variables de entorno
+
+2. php artisan config:cache => se crea un cache de la configuracion para un ejecucion más rapida, WARNING! cuando se tiene la app bajo cache la unica forma de acceder a las variables de entorno es bajo el helper de config('app.name') sino existe el cache se puede accder mediante env('APP_NAME')
+
+3. config:clear => para limpiar el cache
+
+4. optimize:clear => elimina todo el cache de la aplicacion
+
+5. optimize => para producion
+
+6.   make:factory   => se crea un factory, simpre se debe ligar un modelo al factory
+
+7. .env se cambia la variable SESSION_DRIVER: para especificar el tipo de configuracion que va a implementar las variables de entorno.
+
+8. Manually Creating Validators: la validacion de formularios tambien se puede crear manualmente en el caso que sea necesario, creado manualmente ya se puede redirigir al usuario si llega a existir un error.
+
+9. paquete Laravel Ui: para administrar las vistas de autenticacion y registro de usuarios
+
+10. inyección implicita de modelos (route model binding)
+
+11. cuando se usa los parentesis () en una relacion, esto quiere decir que se tiene acceso a todos los metodos del query builder, y por medio de esto se puede crear una instacion de dicha relacion
+
+12. al crear tabla pivote, se usa la siguiente sintaxis para la migracion: CreateCartProductTable => toma el nombre de la primera tabla y luego el de la segunda tabla 
+
+13. relacion One To One (Polymorphic): lo que hace este tipo de relacion polimorfica es agregar al interior de la tabla un nuevo campo para identificar a que tabla coresponde el tipo de registro (name_type) y otro campo para guardar el identifacador del elemento al que pertenece (id)
+
+14. local scoped => es una funcion que se crea en el modelo para poner retriciones a las consulta
+
+15. controlador de recurso anidado => es un controlador de recurso que no solo reaciona a un recurso sino a dos, por ejemplo producto y carrito, porque en este caso se tiene una asociacion de producto a carrito y cada vez que se crea un producto debe tambien crearse el carrito: 
+■ php artisan make:controller OrderPaymentController -m Payment -p Order => se esta gestionando el modelo Payment, pero el padre es Order, ya que payment pertenece a la orden
+
+16. Cookies => para guardar datos del usuario, estos datos vences hasta que el usuario lo borre o hasta que el sistema los borre.
+
+17. inyección de dependencias, consiste en inyectar una depedencia a través de un constructor de una clase, entiendase depedencia como clase.
+
+18. en este caso se hizo la inyecion de dependencias a través de la creacion de un archivo en el app llamado servicio en el cual se creo la clase servicio que va a resolver el carrito
+
+19.Collections => en la documentacion de laravel estan todos los metodos, se pueden filtrar y hacer un monton de cosas
+
+20. 
+■ Accessor => Son funciones que se declaran en el modelo que se ejecutan al momento de acceder a un valor de una tabla
+
+■ Mutator => Son funciones que se declaran en el modelo que se ejecutan al momento de ejecutar a un valor en la tabla de la db
+
+21. forceFill(['propiedad' => $valor]) => para actualizar datos en un tabla sin necesidad de agregar el fillable, en necesario hacerl el save() o no guarda la modificacion
+fill(['propiedad' => $valor]) => simplemente los actualiza
+
+22. creacion de middleware para la ruta admin (admin panel)
+
+23. para crear un controlador en un directorio en especifico :
+■ php artisan make:controller Panel/PanelController
+
+24. global scopes => pone una restricion global a todas las consultas que se hagan en un determinado modelo, si es necesario eliminar el gloabal scoped en otro controlador, lo mejor es crear un nuevo modelo y heredar el antiguo rescribiendo el global scope a basico.
+
+25. Eager Loading -> para traer todas las consultas de un modelo sin tener que hacer un numero de consultas n+1 a la base de datos,
+tambien se puede eliminar el eager loading
+
+26. transacciones de la base de datos en laravel, son operaciones que se ejecutan en multiples tablas, pero que cada una de las operaciones dependen del proceso anterior, y si algun proceso falla, entonces no se hace nada en la base de datos: ejemplo:
+
+■ obtener user
+■ crear la orden asociada a un usuario
+■ obtener el carrito
+■ obtener los productos que estaban guardados en el carrito
+■ calcular la cantidad de productos
+■ crear la orden pasandole todos los productos
+
+todo el anterior proceso se puede hacer mediante un solo proceso llamado transaccion de base de datos, el cual de acuerdo a los datos que retorna el proceso anterior, continua o falla y si falla ningun dato se guarda en la db.
+
+27. creacion de archivo de configuracion para manejar los datos referente a la cookie, se crea en el directorio config y se crea el archivo php.
+
+28. verificar user cuando se registra, todo se administra en el trait "VerifiesEmails"
+
+29. validar las rutas con "verified"
+
+30. recuperar contraseña activar y desactivar
+
+31. upload laravel, file storage, filesystems para subir imagenes y para administrar los discos de los archivos.
+
+al momento de crear un nuevo disk se debe crear la carpeta o directorio a la cual apunta en la propiedad "root" en el filesystems.php y luego en esa carpeta creada se debe copiar un el git ignore

@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Cart;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use App\Services\CartServices;
+use Illuminate\Validation\ValidationException;
+
+// se encarga de gestionar el producto al carrito
+class ProductCartController extends Controller
+{
+
+    public $cartService;
+
+    public function __construct(CartServices $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request, Product $product)
+    {
+
+        $cart =  $this->cartService->getFromCookieOrCreate();
+
+        //* obtener la cantidad de productos en el carrito
+        $quantity = $cart->products()
+            ->find($product->id)
+            ->pivot
+            ->quantity ?? 0;
+
+
+        if ($product->stock < $quantity + 1) {
+            throw ValidationException::withMessages([
+                'product' => "There is not enough stock for the quantity you required of {$product->title}"
+            ]);
+        }
+
+        $cart->products()->syncWithoutDetaching([
+            $product->id => ['quantity' => $quantity + 1]
+        ]);
+
+        // guarda la id del carrito en las cookie
+        $cookie = $this->cartService->makeCookie($cart);
+
+        return redirect()->back()->cookie($cookie);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Product  $product
+     * @param  \App\Models\Cart  $cart
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Product $product, Cart $cart)
+    {
+        // remover producto del carrito
+        $cart->products()->detach($product->id);
+
+        $cookie = $this->cartService->makeCookie($cart);
+
+        return redirect()->back()->cookie($cookie);
+    }
+}
